@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Balena.IOT.RealTimeMonitor.Api
 {
@@ -28,6 +30,11 @@ namespace Balena.IOT.RealTimeMonitor.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Balena.IOT.RealTimeMonitor.Api", Version = "v1" });
+            });
             
             //adds mock repository for the device and telemetry entity
             //using singleton because repository is in memory and while application is running
@@ -50,6 +57,13 @@ namespace Balena.IOT.RealTimeMonitor.Api
             }
 
             app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Balena.IOT.RealTimeMonitor.Api");
+            });
+
+
             app.UseMvc();
         }
     }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Balena.IOT.RealTimeMonitor.Api.Controllers
 {
-    [Route("api/v1/device/telemetry]")]
+    [Route("api/v1/device/telemetry")]
     [ApiController]
     public class DeviceTelemetryController : ControllerBase
     {
@@ -42,9 +42,9 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         }
         
         [HttpGet("{id}")]
-        public async Task<DeviceTelemetry> Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            throw new NotImplementedException();
+            return Ok(new {});
         }
 
     }

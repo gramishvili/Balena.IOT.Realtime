@@ -32,6 +32,11 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
             return Ok(_repository.AsQueryable().ToList());
         }
 
+        /// <summary>
+        /// Get single device by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
