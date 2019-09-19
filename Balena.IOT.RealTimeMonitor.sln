@@ -2,6 +2,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balena.IOT.RealTimeMonitor.Api", "Balena.IOT.RealTimeMonitor.Api\Balena.IOT.RealTimeMonitor.Api.csproj", "{24B91DF8-02F0-4D55-AB84-054DF38952E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balena.IOT.Repository", "Balena.IOT.Repository\Balena.IOT.Repository.csproj", "{0B3A6394-A15A-4032-B034-7FBBFAC78A58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balena.Geolocation", "Balena.Geolocation\Balena.Geolocation.csproj", "{7513C96F-6B1E-4D6E-81BA-169191787ED8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Belane.IOT.Simulator", "Belane.IOT.Simulator\Belane.IOT.Simulator.csproj", "{BA68C55B-223D-4C58-9077-8A9E9872F5C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +18,17 @@ Global
 		{24B91DF8-02F0-4D55-AB84-054DF38952E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24B91DF8-02F0-4D55-AB84-054DF38952E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24B91DF8-02F0-4D55-AB84-054DF38952E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B3A6394-A15A-4032-B034-7FBBFAC78A58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B3A6394-A15A-4032-B034-7FBBFAC78A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B3A6394-A15A-4032-B034-7FBBFAC78A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B3A6394-A15A-4032-B034-7FBBFAC78A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7513C96F-6B1E-4D6E-81BA-169191787ED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7513C96F-6B1E-4D6E-81BA-169191787ED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7513C96F-6B1E-4D6E-81BA-169191787ED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7513C96F-6B1E-4D6E-81BA-169191787ED8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA68C55B-223D-4C58-9077-8A9E9872F5C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA68C55B-223D-4C58-9077-8A9E9872F5C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA68C55B-223D-4C58-9077-8A9E9872F5C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA68C55B-223D-4C58-9077-8A9E9872F5C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

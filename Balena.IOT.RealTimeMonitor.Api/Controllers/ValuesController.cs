@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Balena.IOT.RealTimeMonitor.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
