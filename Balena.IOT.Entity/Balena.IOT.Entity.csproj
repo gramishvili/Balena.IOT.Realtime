@@ -4,8 +4,4 @@
         <TargetFramework>netcoreapp2.2</TargetFramework>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Balena.IOT.Entity\Balena.IOT.Entity.csproj" />
-    </ItemGroup>
-
 </Project>
