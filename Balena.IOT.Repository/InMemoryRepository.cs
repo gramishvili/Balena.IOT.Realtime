@@ -39,7 +39,7 @@ namespace Balena.IOT.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task DeleteByIdAsync(long id)
+        public async Task DeleteByIdAsync(Guid id)
         {
             var item = _context.FirstOrDefault(q => q.Id == id);
             await DeleteAsync(item);
@@ -78,7 +78,7 @@ namespace Balena.IOT.Repository
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public async Task<T> FindByIdAsync(long Id)
+        public async Task<T> FindByIdAsync(Guid Id)
         {
             return _context.FirstOrDefault(q => q.Id == Id);
         }

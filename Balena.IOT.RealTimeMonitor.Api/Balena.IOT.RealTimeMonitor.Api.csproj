@@ -1,13 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Balena.IOT.Entity\Balena.IOT.Entity.csproj" />
+      <ProjectReference Include="..\Balena.IOT.Repository\Balena.IOT.Repository.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="SlimModels" />
+      <Folder Include="Validators" />
     </ItemGroup>
 
 </Project>

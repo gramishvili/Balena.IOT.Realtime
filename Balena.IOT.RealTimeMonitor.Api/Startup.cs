@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Balena.IOT.Entity.Entities;
+using Balena.IOT.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +28,12 @@ namespace Balena.IOT.RealTimeMonitor.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            
+            //adds mock repository for the device and telemetry entity
+            //using singleton because repository is in memory and while application is running
+            //application state should be saved across the calls
+            services.AddSingleton<IRepository<Device>, InMemoryRepository<Device>>();
+            services.AddSingleton<IRepository<DeviceTelemetry>, InMemoryRepository<DeviceTelemetry>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

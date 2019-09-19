@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Balena.IOT.Entity.Entities;
@@ -8,9 +9,9 @@ namespace Balena.IOT.Repository
     {
         IQueryable<T> AsQueryable();
         Task AddAsync(T entity);
-        Task DeleteByIdAsync(long id);
+        Task DeleteByIdAsync(Guid id);
         Task DeleteAsync(T entity);
         Task UpdateAsync(T entity);
-        Task<T> FindByIdAsync(long Id);
+        Task<T> FindByIdAsync(Guid Id);
     }
 }
