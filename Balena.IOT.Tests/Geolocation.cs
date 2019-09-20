@@ -44,7 +44,7 @@ namespace Tests
                     UnitOfLength.Meter
                 );
             
-            Assert.AreEqual(distance, 83.804266092328888);
+            Assert.AreEqual(Math.Round(distance, 2), 83.80);
         }
     }
 }
