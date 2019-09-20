@@ -41,6 +41,9 @@ namespace Balena.IOT.RealTimeMonitor.Api
 
             //add hosted service to process telemetry
             services.AddHostedService<TelemetryProcessorHostedService>();
+
+            //add fake data
+            services.AddHostedService<FakeDataHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

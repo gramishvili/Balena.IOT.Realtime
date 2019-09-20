@@ -1,6 +1,6 @@
 using System;
 
-namespace Balena.IOT.RealTimeMonitor.Api.Commands
+namespace Belane.IOT.Simulator
 {
     public class CreateTelemetryCommand
     {

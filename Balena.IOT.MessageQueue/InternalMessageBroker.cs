@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Balena.IOT.Entity.Entities;
@@ -42,18 +43,19 @@ namespace Balena.IOT.MessageQueue
             await Task.CompletedTask;
         }
 
-        public async Task SubscribeAsync<T>(Action<T> action) where T: IEntity
+        public async Task SubscribeAsync<T>(Action<IEntity> action) where T : IEntity
         {
-            var messageType = typeof(T);
-            if (RegisteredHandlers.ContainsKey(messageType))
+            var type = typeof(T);
+            
+            if (RegisteredHandlers.ContainsKey(type))
             {
-                RegisteredHandlers[messageType].Add(action as Action<IEntity>);
+                RegisteredHandlers[type].Add(action);
             }
             else
             {
                 var bag = new ConcurrentBag<Action<IEntity>>();
-                bag.Add(action as Action<IEntity>);
-                RegisteredHandlers.TryAdd(messageType, bag);
+                bag.Add(action);
+                RegisteredHandlers.TryAdd(type, bag);
             }
         }
     }

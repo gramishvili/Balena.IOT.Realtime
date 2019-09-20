@@ -34,9 +34,9 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         public async Task<IActionResult> Put([FromBody] CreateTelemetryCommand command)
         {
             //validate request
-            var validationResults = await command.ValidateAsync();
-            if (validationResults != null)
-                return BadRequest(validationResults);
+//            var validationResults = await command.ValidateAsync();
+//            if (validationResults != null)
+//                return BadRequest(validationResults);
 
             //convert request to the core entity
             var entity = command.ToEntity();

@@ -2,48 +2,71 @@ using System;
 
 namespace Balena.Geolocation
 {
-    public class GeolocationHelpers
+    //ref: https://stackoverflow.com/questions/6366408/calculating-distance-between-two-latitude-and-longitude-geocoordinates
+    public class GeolocationDistanceCalculator
     {
-        
-        //reference: https://www.ridgesolutions.ie/index.php/2013/11/14/algorithm-to-calculate-speed-from-two-gps-latitude-and-longitude-points-and-time-difference/
-        public static double DistanceAsMeter(double lat1, double lon1, double lat2, double lon2) {
- 
-            // Convert degrees to radians
-            lat1 = lat1 * Math.PI / 180.0;
-            lon1 = lon1 * Math.PI / 180.0;
- 
-            lat2 = lat2 * Math.PI / 180.0;
-            lon2 = lon2 * Math.PI / 180.0;
- 
-            // radius of earth in metres
-            double r = 6378100;
- 
-            // P
-            double rho1 = r * Math.Cos(lat1);
-            double z1 = r * Math.Sin(lat1);
-            double x1 = rho1 * Math.Cos(lon1);
-            double y1 = rho1 * Math.Sin(lon1);
- 
-            // Q
-            double rho2 = r * Math.Cos(lat2);
-            double z2 = r * Math.Sin(lat2);
-            double x2 = rho2 * Math.Cos(lon2);
-            double y2 = rho2 * Math.Sin(lon2);
- 
-            // Dot product
-            double dot = (x1 * x2 + y1 * y2 + z1 * z2);
-            double cos_theta = dot / (r * r);
- 
-            double theta = Math.Acos(cos_theta);
- 
-            // Distance in Metres
-            return r * theta;
-        }
-
-        public static double SpeedAsKMH(double distance, DateTime time1, DateTime time2)
+        public static double SpeedAsMeterPerHour(double distance, DateTime time1, DateTime time2)
         {
-            var timeS = (time1.Ticks - time2.Ticks) / 1000.0;
+            var timeS = (time1 - time2).TotalSeconds / distance * 3600;
             return timeS / distance;
         }
     }
+    
+    public class Coordinates
+    {
+        public double Latitude { get; private set; }
+        public double Longitude { get; private set; }
+    
+        public Coordinates(double latitude, double longitude)
+        {
+            Latitude = latitude;
+            Longitude = longitude;
+        }
+    }
+    
+    public static class CoordinatesDistanceExtensions
+    {
+        public static double DistanceTo(this Coordinates baseCoordinates, Coordinates targetCoordinates)
+        {
+            return DistanceTo(baseCoordinates, targetCoordinates, UnitOfLength.Kilometers);
+        }
+    
+        public static double DistanceTo(this Coordinates baseCoordinates, Coordinates targetCoordinates, UnitOfLength unitOfLength)
+        {
+            var baseRad = Math.PI * baseCoordinates.Latitude / 180;
+            var targetRad = Math.PI * targetCoordinates.Latitude/ 180;
+            var theta = baseCoordinates.Longitude - targetCoordinates.Longitude;
+            var thetaRad = Math.PI * theta / 180;
+    
+            double dist =
+                Math.Sin(baseRad) * Math.Sin(targetRad) + Math.Cos(baseRad) *
+                Math.Cos(targetRad) * Math.Cos(thetaRad);
+            dist = Math.Acos(dist);
+    
+            dist = dist * 180 / Math.PI;
+            dist = dist * 60 * 1.1515;
+    
+            return unitOfLength.ConvertFromMiles(dist);
+        }
+    }
+    
+    public class UnitOfLength
+    {
+        public static UnitOfLength Kilometers = new UnitOfLength(1.609344);
+        public static UnitOfLength NauticalMiles = new UnitOfLength(0.8684);
+        public static UnitOfLength Miles = new UnitOfLength(1);
+        public static UnitOfLength Meter = new UnitOfLength(1.609344*1000);
+        
+        private readonly double _fromMilesFactor;
+    
+        private UnitOfLength(double fromMilesFactor)
+        {
+            _fromMilesFactor = fromMilesFactor;
+        }
+    
+        public double ConvertFromMiles(double input)
+        {
+            return input*_fromMilesFactor;
+        }
+    } 
 }

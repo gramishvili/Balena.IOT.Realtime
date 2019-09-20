@@ -24,7 +24,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
         
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _messageBroker.SubscribeAsync<DeviceTelemetry>(telemetry =>  TelemetryReceived(telemetry).GetAwaiter().GetResult());
+            _messageBroker.SubscribeAsync<DeviceTelemetry>(telemetry =>  TelemetryReceived(telemetry as DeviceTelemetry).GetAwaiter().GetResult());
         }
 
         public  Task StopAsync(CancellationToken cancellationToken)
@@ -43,30 +43,37 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
                 Console.WriteLine($"WARN: Received telemetry for unknown device: {telemetry.SerialNumber}");
                 return;
             }
+
             
             //check if this telemetry is first entry for the device
             if (!device.LastKnownLatitue.HasValue || !device.LastKnownLongitude.HasValue)
             {
                 device.LastKnownLongitude = telemetry.Longitude;
                 device.LastKnownLatitue = telemetry.Latitude;
+                device.LastContact = telemetry.DeviceDate;
                 //this is first telemetry so we can not calculate speed for the device
                 await _deviceRepository.UpdateAsync(device);
                 return;
             }
 
-            //calculate distance between last and current telemetry in meters
-            var distanceMeter =  GeolocationHelpers.DistanceAsMeter(device.LastKnownLatitue.Value, device.LastKnownLongitude.Value,
-                telemetry.Latitude, telemetry.Longitude);
-
+            //calculate distance in meters
+            var distance = new Coordinates(device.LastKnownLatitue.Value, device.LastKnownLongitude.Value)
+                .DistanceTo(
+                    new Coordinates(telemetry.Latitude, telemetry.Longitude),
+                    UnitOfLength.Meter
+                );
+            
             //calculate speed
-            var speed = GeolocationHelpers.SpeedAsKMH(distanceMeter, device.LastContact.Value, telemetry.DeviceDate);
+            var speed = GeolocationDistanceCalculator.SpeedAsMeterPerHour(distance, telemetry.DeviceDate, device.LastContact.Value);
 
             //set last known speed for the device
             device.LastKnownSpeed = speed;
 
             //check device behaviour
-            device.State = distanceMeter <= DeviceConstants.MoveAlertInMeters ? 
+            device.State = distance <= DeviceConstants.MoveAlertInMeters ? 
                 DeviceState.OperatingAbnormally : DeviceState.OperatingNormally;
+            
+            device.LastContact = telemetry.DeviceDate;
             
             //update device 
             await _deviceRepository.UpdateAsync(device);

@@ -35,6 +35,17 @@ namespace Balena.IOT.Repository
         }
 
         /// <summary>
+        /// creates new entries from ienumerable
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task AddManyAsync(IEnumerable<T> entity)
+        {
+            _context.AddRange(entity);
+        }
+
+        /// <summary>
         /// deletes entity by id
         /// </summary>
         /// <param name="id"></param>
