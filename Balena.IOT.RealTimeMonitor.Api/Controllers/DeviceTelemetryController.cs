@@ -31,7 +31,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] CreateTelemtryCommand command)
+        public async Task<IActionResult> Put([FromBody] CreateTelemetryCommand command)
         {
             //validate request
             var validationResults = await command.ValidateAsync();
