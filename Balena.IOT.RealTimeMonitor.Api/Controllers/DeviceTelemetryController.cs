@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Balena.IOT.Entity.Entities;
+using Balena.IOT.MessageQueue;
 using Balena.IOT.RealTimeMonitor.Api.Commands;
 using Balena.IOT.RealTimeMonitor.Api.Mappers.Telemetry;
 using Balena.IOT.Repository;
@@ -15,10 +16,13 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
     public class DeviceTelemetryController : ControllerBase
     {
         private readonly IRepository<DeviceTelemetry> _repository;
+        private readonly IMessageBroker _messageBroker;
 
-        public DeviceTelemetryController(IRepository<DeviceTelemetry> _repository)
+        public DeviceTelemetryController(IRepository<DeviceTelemetry> _repository,
+            IMessageBroker messageBroker)
         {
             this._repository = _repository;
+            _messageBroker = messageBroker;
         }
 
         [HttpPut]
@@ -35,7 +39,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
             await _repository.AddAsync(entity);
 
             //dispatch event to process telemetry
-            //await telemetryQueue.TelemetryUpdated(entity);
+            await _messageBroker.BroadcastAsync(entity);
 
             // return 201
             return CreatedAtAction(nameof(Get), new {id = entity.Id}, entity);
@@ -44,7 +48,10 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            return Ok(new {});
+            var entity = await _repository.FindByIdAsync(id);
+            if (entity == null)
+                return BadRequest();
+            return Ok(entity);
         }
 
     }
