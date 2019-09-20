@@ -16,11 +16,8 @@ namespace Balena.Fakes
                 LastKnownSpeed = 5,
                 Model = "BLNUMB1",
                 Name = "Balena umbrella drone",
-                Secret = "secret",
                 SerialNumber = "SN123",
-                State = DeviceState.OperatingNormally,
-                Status = DeviceStatus.Offline
-                
+                State = DeviceState.OperatingNormally
             });
         }
     }

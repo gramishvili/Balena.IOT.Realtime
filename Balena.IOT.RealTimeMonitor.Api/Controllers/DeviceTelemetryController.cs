@@ -25,6 +25,11 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
             _messageBroker = messageBroker;
         }
 
+        /// <summary>
+        /// create new telemetry
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] CreateTelemtryCommand command)
         {
@@ -54,5 +59,16 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
             return Ok(entity);
         }
 
+        /// <summary>
+        /// list telemetry
+        /// </summary>
+        /// <param name="take"></param>
+        /// <param name="skip"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> Get(long take = 0, long skip = 0)
+        {
+            return Ok(_repository.AsQueryable().ToList());
+        }
     }
 }

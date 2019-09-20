@@ -42,17 +42,17 @@ namespace Balena.IOT.MessageQueue
             await Task.CompletedTask;
         }
 
-        public async Task SubscribeAsync<T>(Action<IEntity> action) where T: IEntity
+        public async Task SubscribeAsync<T>(Action<T> action) where T: IEntity
         {
             var messageType = typeof(T);
             if (RegisteredHandlers.ContainsKey(messageType))
             {
-                RegisteredHandlers[messageType].Add(action);
+                RegisteredHandlers[messageType].Add(action as Action<IEntity>);
             }
             else
             {
                 var bag = new ConcurrentBag<Action<IEntity>>();
-                bag.Add(action);
+                bag.Add(action as Action<IEntity>);
                 RegisteredHandlers.TryAdd(messageType, bag);
             }
         }

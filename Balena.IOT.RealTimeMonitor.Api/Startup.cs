@@ -1,5 +1,6 @@
 ﻿using Balena.IOT.Entity.Entities;
 using Balena.IOT.MessageQueue;
+using Balena.IOT.RealTimeMonitor.Api.HostedService;
 using Balena.IOT.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +38,9 @@ namespace Balena.IOT.RealTimeMonitor.Api
 
             //add internal message broker for processing purposes
             services.AddSingleton<IMessageBroker, InternalMessageBroker>();
+
+            //add hosted service to process telemetry
+            services.AddHostedService<TelemetryProcessorHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

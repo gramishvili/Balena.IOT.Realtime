@@ -12,7 +12,12 @@ namespace Balena.IOT.RealTimeMonitor.Api.Mappers.Telemetry
             return new DeviceTelemetry
             {
                 Id = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                SerialNumber =  @this.SerialNumber,
+                DeviceDate =  @this.DeviceDate,
+                Latitude = @this.Latitude,
+                Longitude = @this.Longitude,
+                ServerDate = DateTime.UtcNow
             };
         }
     }

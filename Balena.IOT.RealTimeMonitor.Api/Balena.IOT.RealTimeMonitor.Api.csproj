@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Balena.Geolocation\Balena.Geolocation.csproj" />
       <ProjectReference Include="..\Balena.IOT.Entity\Balena.IOT.Entity.csproj" />
       <ProjectReference Include="..\Balena.IOT.MessageQueue\Balena.IOT.MessageQueue.csproj" />
       <ProjectReference Include="..\Balena.IOT.Repository\Balena.IOT.Repository.csproj" />
