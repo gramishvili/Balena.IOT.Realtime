@@ -14,6 +14,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Balena.Geolocation\Balena.Geolocation.csproj" />
+      <ProjectReference Include="..\Balena.IOT.MessageQueue\Balena.IOT.MessageQueue.csproj" />
+      <ProjectReference Include="..\Balena.IOT.RealTimeMonitor.Api\Balena.IOT.RealTimeMonitor.Api.csproj" />
+      <ProjectReference Include="..\Balena.IOT.Repository\Balena.IOT.Repository.csproj" />
     </ItemGroup>
 
 </Project>

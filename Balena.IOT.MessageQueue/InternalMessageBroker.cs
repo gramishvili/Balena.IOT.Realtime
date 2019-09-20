@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -58,5 +59,16 @@ namespace Balena.IOT.MessageQueue
                 RegisteredHandlers.TryAdd(type, bag);
             }
         }
+
+        public async Task<IEnumerable<Action<IEntity>>> MessageTypeSubscribersAsync<T>() where T : IEntity
+        {
+            var messageType = typeof(T);
+
+            if (!RegisteredHandlers.TryGetValue(messageType, out var handlers) || handlers.Count == 0)
+                return null;
+
+            return handlers.ToList();
+        }
+
     }
 }
