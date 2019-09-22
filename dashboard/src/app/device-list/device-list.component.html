@@ -1,0 +1,68 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <mat-card-title>Balena device realtime monitor</mat-card-title>
+    <mat-card-subtitle
+      ><label
+        >next auto refresh in {{ counter }} seconds</label
+      ></mat-card-subtitle
+    >
+  </mat-card-header>
+  <mat-card-content>
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="serialNumber">
+        <th mat-header-cell *matHeaderCellDef>SN.</th>
+        <td mat-cell *matCellDef="let element">{{ element.serialNumber }}</td>
+      </ng-container>
+      <ng-container matColumnDef="lastKnownSpeed">
+        <th mat-header-cell *matHeaderCellDef>Speed Meter/H</th>
+        <td mat-cell *matCellDef="let element">{{ element.lastKnownSpeed }}</td>
+      </ng-container>
+      <ng-container matColumnDef="lastKnownLatitue">
+        <th mat-header-cell *matHeaderCellDef>Lat</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.lastKnownLatitue }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="lastKnownLongitude">
+        <th mat-header-cell *matHeaderCellDef>Long</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.lastKnownLongitude }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="lastContact">
+        <th mat-header-cell *matHeaderCellDef>Last contact</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.lastContact | date: 'medium' }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="model">
+        <th mat-header-cell *matHeaderCellDef>Model</th>
+        <td mat-cell *matCellDef="let element">{{ element.model }}</td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.type | deviceType }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef>State</th>
+        <td
+          [ngClass]="{ warning: element.state === 99 }"
+          *matCellDef="let element"
+        >
+          {{ element.state | deviceStatus }}
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-flat-button (click)="refresh()">Refresh</button>
+  </mat-card-actions>
+</mat-card>
