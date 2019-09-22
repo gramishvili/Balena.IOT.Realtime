@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <title>Balena IOT device real-time monitoring</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body>
+        <p><img src="https://www.balena.io/avatar.png" alt="Logo of the project"></p>
+<h1 id="balena-iot-device-real-time-monitoring">Balena IOT device real-time monitoring</h1>
+<p>A company has several drones flying around the country.<br>
+The Purpose of the platform is to track the location of every drone in real-time.<br>
+The system's dashboard displays the device telemetry in realtime.</p>
+<p>Each drone is associated with a unique identifier: Serial Number.</p>
+<p>For Testing purposes, we use Simulator to report its geolocation coordinates to the central server in real-time.</p>
+<p>As there are diverse models of the devices(drones),
+they operate at a different speed.
+That is why device firmware decides the frequency of telemetry reporting.
+Devices use HTTP/2 to communicate with the monitoring platform.</p>
+<p>Major versions of drones report it's telemetry to the central server 6 times per minute. depending on their speed limits.</p>
+<p>Having in mind that project is the MVP stage, this reflects the architecture.
+Architecture is built on SOLID and well testable principle.
+Code fragments are separated in modules, potentially shippable packages.</p>
+<p>Drones are abstracted as Device entity, so when new versions of drones arrive, the platform is not dependant on it.</p>
+<p>Devices send it's telemetries, like latitude, longitude and other info to the central server.</p>
+<p>The server creates the entry for the telemetry,
+broadcasts an event that new telemetry is received and returns
+HTTP 201 code to the drone.</p>
+<p>The subscriber subscribes to the telemetry event, known as HostedService and listens to the events.</p>
+<p>Once the telemetry event arrives in the subscriber it calculates data for and updates device entity accordingly.</p>
+<p>Real-time dashboard calls API/v1/device endpoint once in a 10 second to get the latest data available on the devices.</p>
+<h2 id="installing--getting-started">Installing / Getting started</h2>
+<p>Balena IOT device real-time monitoring platform has docker in mind.
+run the following commands to spin up a container.</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash">pull the container from the registry</span>
+docker pull gioasap/balena_iot_realtime_monitor
+<span class="hljs-meta">
+#</span><span class="bash">run the container</span>
+docker run --rm  -p 5000:5000 -p 80:80 --name balena_iot_realtime_monitor gioasap/balena_iot_realtime_monitor
+
+</div></code></pre>
+<blockquote>
+<p>p/s<br>
+ctrl+c(command+c on osx) to exit/stop the container<br>
+container usually takes 5/10s to spin up</p>
+</blockquote>
+<h4 id="endpoints">Endpoints</h4>
+<blockquote>
+<p>Dashboard is exposed on the host machine, port: 80 &gt; <a href="http://localhost">http://localhost</a><br>
+Api is exposed on the host mashince, port 5000 &gt; <a href="http://localhost:5000/swagger/index.html">http://localhost:5000/swagger/index.html</a></p>
+</blockquote>
+<h4 id="swagger">Swagger</h4>
+<p>API uses swagger to expose developer-friendly documentation</p>
+<blockquote>
+<p><a href="http://localhost:5000/swagger/index.html">http://localhost:5000/swagger/index.html</a></p>
+</blockquote>
+<h2 id="build-from-dockerfile">Build from Dockerfile</h2>
+<p>Here's a brief intro about what a developer must do to build container locally</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash">build the container</span>
+docker build -t balena_iot_realtime_monitor .
+<span class="hljs-meta">
+#</span><span class="bash">run the container</span>
+docker run --rm  -p 5000:5000 -p 80:80 --name balena_iot_realtime_monitor balena_iot_realtime_monitor
+</div></code></pre>
+<h2 id="dev-dependencies">Dev dependencies</h2>
+<blockquote>
+<p><code>dotnet core 2.2</code><br>
+<code>docker</code><br>
+<code>angular-cli</code></p>
+</blockquote>
+<h2 id="unit-test">Unit Test</h2>
+<p>Project provides unit tests on some levels.<br>
+Dockerfile handles automated tests.<br>
+If tests are failing, the container will fail to build.</p>
+<p>To run tests manually, run the following command:</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash">restore dependencies</span>
+dotnet restore
+<span class="hljs-meta">
+#</span><span class="bash">run tests</span>
+dotnet test
+</div></code></pre>
+<h2 id="project-structure">Project structure</h2>
+<p>Belane IOT realtime monitoring uses angular 8 for frontend and net core for the backend.</p>
+<h3 id="frontend">Frontend</h3>
+<p>The project can be found under <code>dashboard/</code> directory</p>
+<p>It is a simple angular application, the single table which displays device analytical data.</p>
+<p>Table component could be found under <code>dashboard/src/app/device-list</code></p>
+<p>Service integration could be found under <code>dashboard/src/app/device.service.ts</code></p>
+<p>Pipelines for data transformation could be found under <code>dashboard/src/app/pipes</code></p>
+<h3 id="api---backend">Api - backend</h3>
+<p>Api project is location at <code>Balena.IOT.RealTimeMonitor.Api/</code> directory</p>
+<p>API endpoint controllers</p>
+<blockquote>
+<p><code>Balena.IOT.RealTimeMonitor.Api/Controllers/DeviceController.cs</code> Endpoint<br>
+<code>/api/v1/device</code> - responsible for device(Drone) list and get</p>
+</blockquote>
+<blockquote>
+<p><code>Balena.IOT.RealTimeMonitor.Api/Controllers/DeviceTelemetryController.cs</code><br>
+Endpoint<br>
+<code>/api/v1/device/telemetry</code> - responsible for receiving telemetry from the device(Drone), realtime location</p>
+</blockquote>
+<p>Once the telemetry is received, API dispatches the internal event.
+Event handler, which is responsible for the distance and speed calculations, is located under <code>Balena.IOT.RealTimeMonitor.Api/HostedService/TelemetryProcessorHostedService.cs</code></p>
+<h3 id="dependency-libraries">Dependency libraries</h3>
+<blockquote>
+<p><code>Balena.Geolocation/</code> library provides geolocation helper methods, distance and speed calculations. Could be used in future projects.</p>
+</blockquote>
+<blockquote>
+<p><code>Balena.IOT.Entity/</code> library provides a business model (Entity) descriptions. Could be used in future projects.</p>
+</blockquote>
+<blockquote>
+<p><code>Balena.IOT.Repository/</code> library implements a Repository pattern for accessing the data layer. Dependency is abstract, implementation is InMemeory for testing purposes.
+Could be used in future projects.</p>
+</blockquote>
+<blockquote>
+<p><code>Balena.IOT.Tests/</code> Unit tests that coverst libraries</p>
+</blockquote>
+<blockquote>
+<p><code>Belane.IOT.Simulator/</code> Simple drone simulator</p>
+</blockquote>
+<h3 id="docker-integration-and-hosting">Docker integration and hosting</h3>
+<p>Dockerfile covers 3 stages.</p>
+<h4 id="stage-1---intermediatary-container">Stage 1 - INTERMEDIATARY container</h4>
+<p>Runs unit tests and only after that builds API and Simulator saves it as artifact <code>build-env</code></p>
+<h4 id="stage-2---intermediatary-container">Stage 2 - INTERMEDIATARY container</h4>
+<p>Runs under <code>node</code> docker image, install angular-cli, restores packages and builds a dashboard, artifacts are passed to <code>angular-build</code></p>
+<h4 id="stage-3---shippable-container">Stage 3 - shippable container</h4>
+<p>Runs under <code>dotnet-runtime</code> docker image.</p>
+<h4 id="docker-dependencies">Docker Dependencies</h4>
+<blockquote>
+<p><code>supervisor</code> is used for process managment.<br>
+<code>nginx</code> frontend reverse proxy.<br>
+<code>dotnet</code> backend runtime.<br>
+<code>supervisor_api.conf</code> api supervisor service file.<br>
+<code>supervisor_simulator.conf</code> simulator supervisor service file.<br>
+<code>supervisor_nginx.conf</code> nginx supervisor service file.<br>
+<code>nginx/nginx.conf</code> nginx hosting configuration file for dashboard.</p>
+</blockquote>
+
+    </body>
+    </html>

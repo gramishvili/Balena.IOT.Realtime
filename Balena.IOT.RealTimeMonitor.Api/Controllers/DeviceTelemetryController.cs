@@ -33,13 +33,23 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] CreateTelemetryCommand command)
         {
-            //validate request
-//            var validationResults = await command.ValidateAsync();
-//            if (validationResults != null)
-//                return BadRequest(validationResults);
+            //validate request   
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
+            //ensure telemetry is for existing device
+            var device = _repository.AsQueryable().FirstOrDefault(q => q.SerialNumber == command.SerialNumber);
+            
+            if(device == null)
+            {
+                ModelState.AddModelError("SerialNumber", "Device with this serial number doesn't exist");
+                return BadRequest(ModelState);
+            }
 
             //convert request to the core entity
-            var entity = command.ToEntity();
+            var entity = command.ToCoreEntity();
+            
             //save entity in the repository
             await _repository.AddAsync(entity);
 
@@ -50,6 +60,11 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
             return CreatedAtAction(nameof(Get), new {id = entity.Id}, entity);
         }
         
+        /// <summary>
+        /// get telemetry by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeviceTelemetry</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
@@ -64,7 +79,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         /// </summary>
         /// <param name="take"></param>
         /// <param name="skip"></param>
-        /// <returns></returns>
+        /// <returns>Ienumerable<DeviceTelemetry></returns>
         [HttpGet]
         public async Task<ActionResult> Get(long take = 0, long skip = 0)
         {
