@@ -24,7 +24,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _messageBroker.SubscribeAsync<DeviceTelemetry>(telemetry =>
+           await _messageBroker.SubscribeAsync<DeviceTelemetry>(telemetry =>
                 TelemetryReceived(telemetry as DeviceTelemetry).GetAwaiter().GetResult());
         }
 

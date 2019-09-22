@@ -15,13 +15,16 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
     [ApiController]
     public class DeviceTelemetryController : ControllerBase
     {
-        private readonly IRepository<DeviceTelemetry> _repository;
+        private readonly IRepository<DeviceTelemetry> _telemetryRepository;
+        private readonly IRepository<Device> _deviceRepository;
         private readonly IMessageBroker _messageBroker;
 
-        public DeviceTelemetryController(IRepository<DeviceTelemetry> _repository,
+        public DeviceTelemetryController(IRepository<DeviceTelemetry> telemetryRepository,
+            IRepository<Device> deviceRepository,
             IMessageBroker messageBroker)
         {
-            this._repository = _repository;
+            _telemetryRepository = telemetryRepository;
+            _deviceRepository = deviceRepository;
             _messageBroker = messageBroker;
         }
 
@@ -39,7 +42,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
 
 
             //ensure telemetry is for existing device
-            var device = _repository.AsQueryable().FirstOrDefault(q => q.SerialNumber == command.SerialNumber);
+            var device = _deviceRepository.AsQueryable().FirstOrDefault(q => q.SerialNumber == command.SerialNumber);
             
             if(device == null)
             {
@@ -50,8 +53,8 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
             //convert request to the core entity
             var entity = command.ToCoreEntity();
             
-            //save entity in the repository
-            await _repository.AddAsync(entity);
+            //save entity in the telemetryRepository
+            await _telemetryRepository.AddAsync(entity);
 
             //dispatch event to process telemetry
             await _messageBroker.BroadcastAsync(entity);
@@ -68,7 +71,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var entity = await _repository.FindByIdAsync(id);
+            var entity = await _telemetryRepository.FindByIdAsync(id);
             if (entity == null)
                 return BadRequest();
             return Ok(entity);
@@ -81,9 +84,9 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         /// <param name="skip"></param>
         /// <returns>Ienumerable<DeviceTelemetry></returns>
         [HttpGet]
-        public async Task<ActionResult> Get(long take = 0, long skip = 0)
+        public ActionResult Get(long take = 0, long skip = 0)
         {
-            return Ok(_repository.AsQueryable().ToList());
+            return Ok(_telemetryRepository.AsQueryable().ToList());
         }
     }
 }

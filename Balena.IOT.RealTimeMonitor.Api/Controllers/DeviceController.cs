@@ -27,7 +27,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.Controllers
         /// <param name="skip"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Get(long take=0, long skip=0)
+        public IActionResult Get(long take=0, long skip=0)
         {
             return Ok(_repository.AsQueryable().ToList());
         }

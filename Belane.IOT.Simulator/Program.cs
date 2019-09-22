@@ -10,7 +10,7 @@ namespace Belane.IOT.Simulator
     {
         static void Main(string[] args)
         {
-            Task.Delay(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+            Task.Delay(TimeSpan.FromSeconds(4)).GetAwaiter().GetResult();
             Console.WriteLine("INFO: Simulator -  Initializing simulator");
             var data = new MockData();
             using (var httpClient = new HttpClient())
