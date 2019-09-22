@@ -14,20 +14,21 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
     {
         private readonly IRepository<Device> _deviceRepository;
         private readonly IMessageBroker _messageBroker;
-        
+
         public TelemetryProcessorHostedService(IRepository<Device> deviceRepository,
             IMessageBroker messageBroker)
         {
             _deviceRepository = deviceRepository;
             _messageBroker = messageBroker;
         }
-        
+
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _messageBroker.SubscribeAsync<DeviceTelemetry>(telemetry =>  TelemetryReceived(telemetry as DeviceTelemetry).GetAwaiter().GetResult());
+            _messageBroker.SubscribeAsync<DeviceTelemetry>(telemetry =>
+                TelemetryReceived(telemetry as DeviceTelemetry).GetAwaiter().GetResult());
         }
 
-        public  Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
@@ -36,7 +37,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
         {
             //query device with serial number
             var device = _deviceRepository.AsQueryable().FirstOrDefault(q => q.SerialNumber == telemetry.SerialNumber);
-        
+
             //check if device is known
             if (device == null)
             {
@@ -44,7 +45,7 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
                 return;
             }
 
-            
+
             //check if this telemetry is first entry for the device
             if (!device.LastKnownLatitue.HasValue || !device.LastKnownLongitude.HasValue)
             {
@@ -57,24 +58,29 @@ namespace Balena.IOT.RealTimeMonitor.Api.HostedService
             }
 
             //calculate distance in meters
-            var distance = new Coordinates(device.LastKnownLatitue.Value, device.LastKnownLongitude.Value)
+            var distance = Math.Round(new Coordinates(device.LastKnownLatitue.Value, device.LastKnownLongitude.Value)
                 .DistanceTo(
                     new Coordinates(telemetry.Latitude, telemetry.Longitude),
                     UnitOfLength.Meter
-                );
-            
-            //calculate speed
-            var speed = GeolocationDistanceCalculator.SpeedAsMeterPerHour(distance, telemetry.DeviceDate, device.LastContact.Value);
+                ), 2);
+
+            //calculate speed meters per hour
+            double speed = 0;
+            if (distance > 0)
+                speed = Math.Round(
+                    GeolocationDistanceCalculator.SpeedAsMeterPerHour(distance, telemetry.DeviceDate,
+                        device.LastContact.Value), 2);
 
             //set last known speed for the device
             device.LastKnownSpeed = speed;
 
             //check device behaviour
-            device.State = distance <= DeviceConstants.MoveAlertInMeters ? 
-                DeviceState.OperatingAbnormally : DeviceState.OperatingNormally;
-            
+            device.State = distance <= DeviceConstants.MoveAlertInMeters
+                ? DeviceState.OperatingAbnormally
+                : DeviceState.OperatingNormally;
+
             device.LastContact = telemetry.DeviceDate;
-            
+
             //update device 
             await _deviceRepository.UpdateAsync(device);
         }
